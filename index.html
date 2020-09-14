@@ -15,6 +15,23 @@
 
   gtag('config', 'UA-111768569-12');
 </script>
+
+		<script>
+			var aiptag = aiptag || {};
+      aiptag.cmd = aiptag.cmd || [];
+      aiptag.cmd.display = aiptag.cmd.display || [];
+      aiptag.cmd.player = aiptag.cmd.player || [];
+      
+      //CMP tool settings
+      aiptag.cmp = {
+      	show: true,
+      	position: "centered",  //centered or bottom
+      	button: true,
+      	buttonText: "Privacy settings",
+      	buttonPosition: "bottom-left" //bottom-left, bottom-right, top-left, top-right
+      }
+		</script>
+		<script async src="//api.adinplay.com/display/pub/RKB/rocketbirds.ga/display.min.js"></script>
     <style>
       html {
         box-sizing: border-box;
@@ -101,6 +118,7 @@
   </head>
 
   <body>
+    <div id="rocketbirds-ga_300x250" style="display:none;width: 300px;height: 250px;position: absolute;border: 2px solid black;z-index: 50;right: 0px;bottom: 50%;transform: translate(0, 50%);"></div>
     <div id="gameContainer"></div>
     <div id="loader">
       <img class="logo" src="logo.png">
@@ -111,6 +129,13 @@
 
   <script src="Build/UnityLoader.js"></script>
   <script>
+  window.closeBanner = function(){
+    document.getElementById("rocketbirds-ga_300x250").style.display = "none";
+  }
+  window.showBanner = function(){
+    document.getElementById("rocketbirds-ga_300x250").style.display = "block";
+    
+  }
   var gameInstance = UnityLoader.instantiate("gameContainer", "Build/FALL_GUYS.json", {onProgress: UnityProgress});
   function UnityProgress(gameInstance, progress) {
     if (!gameInstance.Module) {
@@ -125,11 +150,25 @@
     }
     gameInstance.progress.style.transform = `scaleX(${progress})`;
     if (progress === 1 && !gameInstance.removeTimeout) {
+      aiptag.cmd.display.push(function() { aipDisplayTag.display('rocketbirds-ga_300x250'); });
       gameInstance.removeTimeout = setTimeout(function() {
           loader.style.display = "none";
+          
       }, 2000);
     }
   }
+  var nexticks = 0;
+  setInterval(function(){
+    if(nexticks>0){
+      nexticks-=200;
+      return;
+    }
+    if(document.getElementById("sdk__advertisement")&&document.getElementById("sdk__advertisement").opacity==1){
+      document.getElementById("rocketbirds-ga_300x250").style.display = "none";
+      nexticks = 3000;
+    }
+    
+  },200);
   </script>
 
 </html>
